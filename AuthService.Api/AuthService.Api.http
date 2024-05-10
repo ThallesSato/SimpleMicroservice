@@ -1,0 +1,16 @@
+
+###
+
+POST http://localhost:5170/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+
+GET http://localhost:5170/api/auth/claims
+Accept: application/json
+Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN0cmluZyIsIm5iZiI6MTcxNTM2MDQ5MywiZXhwIjoxNzE1MzY3NjkzLCJpYXQiOjE3MTUzNjA0OTN9.kEsD7jnr7kb5hNCvVLdy0ZkNPybyHHaKXHZvnp7dSbk'

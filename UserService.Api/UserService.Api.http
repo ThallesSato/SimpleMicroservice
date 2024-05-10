@@ -1,0 +1,8 @@
+@UserService.Api_HostAddress = http://localhost:5019
+
+GET {{UserService.Api_HostAddress}}/api/Teste/
+Accept: application/json
+Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN0cmluZyIsIm5iZiI6MTcxNTM1OTA0NCwiZXhwIjoxNzE1MzY2MjQ0LCJpYXQiOjE3MTUzNTkwNDR9.G-nV7LRC3NDgkX4kqx8q_OGzvTBDtm9yD2wefH3dKNs'
+
+
+###
