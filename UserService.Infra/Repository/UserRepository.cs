@@ -35,12 +35,12 @@ public class UserRepository : IUserRepository
         return result.Entity;
     }
 
-    public void UpdateAsync(User user)
+    public void Update(User user)
     {
         _context.Users.Update(user);
     }
 
-    public void DeleteAsync(User user)
+    public void Delete(User user)
     {
         _context.Users.Remove(user);
     }

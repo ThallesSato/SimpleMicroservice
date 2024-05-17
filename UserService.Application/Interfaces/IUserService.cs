@@ -8,6 +8,6 @@ public interface IUserService
     Task<List<User>> GetAllAsync();
     Task<User?> GetByUsernameAsync(string username);
     Task<User> AddAsync(User user);
-    Task<bool> UpdateAsync(string username, UserDto user);
-    bool DeleteAsync(string username);
+    bool Update(User user);
+    bool Delete(User user);
 }

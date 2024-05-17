@@ -1,6 +1,9 @@
-﻿namespace UserService.Application.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UserService.Application.Dto;
 
 public class UserDto
 {
-    public string? Nome { get; set; }
+    [Required]
+    public required string Nome { get; set; }
 }

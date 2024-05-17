@@ -28,13 +28,15 @@ public class UserService : IUserService
         return await _repository.AddAsync(user);
     }
 
-    public Task<bool> UpdateAsync(string username, UserDto user)
+    public bool Update(User user)
     {
-        throw new NotImplementedException();
+        _repository.Update(user);
+        return true;
     }
 
-    public bool DeleteAsync(string username)
+    public bool Delete(User user)
     {
-        throw new NotImplementedException();
+        _repository.Delete(user);
+        return true;
     }
 }

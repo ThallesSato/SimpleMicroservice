@@ -45,12 +45,38 @@ public class UserController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UserDto user)
+    public async Task<IActionResult> Put(UserDto userDto)
     {
         try
         {
             var username = User.Claims.FirstOrDefault(x => x.Type == "username")?.Value ?? "falhou";
-            await _userService.UpdateAsync(username, user);
+            var user = await _userService.GetByUsernameAsync(username);
+            
+            if (user == null)
+                return BadRequest("User not found");
+            
+            user.Nome = userDto.Nome;
+            _userService.Update(user);
+            return Ok();
+        } 
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpDelete]
+    public async Task<IActionResult> Delete()
+    {
+        try
+        {
+            var username = User.Claims.FirstOrDefault(x => x.Type == "username")?.Value ?? "falhou";
+            var user = await _userService.GetByUsernameAsync(username);
+            
+            if (user == null)
+                return BadRequest("User not found");
+            
+            _userService.Delete(user);
             return Ok();
         } 
         catch (Exception e)
