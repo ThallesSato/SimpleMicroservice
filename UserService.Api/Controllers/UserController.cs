@@ -22,6 +22,7 @@ public class UserController : ControllerBase
     {
         try
         {
+            // Return all users
             return Ok(await _userService.GetAllAsync());
         }
         catch (Exception e)
@@ -35,7 +36,14 @@ public class UserController : ControllerBase
     {
         try
         {
-            var username = User.Claims.FirstOrDefault(x => x.Type == "username")?.Value ?? "falhou";
+            // Get the username from the claims
+            var username = User.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
+
+            // Check if the username is null
+            if (username == null)
+                return Unauthorized();
+            
+            // Return Ok with the user
             return Ok(await _userService.GetByUsernameAsync(username));
         } 
         catch (Exception e)
@@ -49,13 +57,24 @@ public class UserController : ControllerBase
     {
         try
         {
-            var username = User.Claims.FirstOrDefault(x => x.Type == "username")?.Value ?? "falhou";
+            // Get the username from the claims
+            var username = User.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
+
+            // Check if the username is null
+            if (username == null)
+                return Unauthorized();
+
+            // Get the user details by username asynchronously
             var user = await _userService.GetByUsernameAsync(username);
-            
+    
+            // Check if the user exists
             if (user == null)
                 return BadRequest("User not found");
-            
+    
+            // Update the user's name with the new value
             user.Nome = userDto.Nome;
+        
+            // Call the service to update the user
             _userService.Update(user);
             return Ok();
         } 
@@ -70,12 +89,21 @@ public class UserController : ControllerBase
     {
         try
         {
-            var username = User.Claims.FirstOrDefault(x => x.Type == "username")?.Value ?? "falhou";
-            var user = await _userService.GetByUsernameAsync(username);
+            // Get the username from the claims
+            var username = User.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
+
+            // Check if the username is null
+            if (username == null)
+                return Unauthorized();
             
+            // Get the user details by username asynchronously
+            var user = await _userService.GetByUsernameAsync(username);
+        
+            // Check if the user is not found
             if (user == null)
                 return BadRequest("User not found");
-            
+        
+            // Delete the user
             _userService.Delete(user);
             return Ok();
         } 

@@ -11,14 +11,14 @@ public static class Initializer
 {
     public static void ConfigureDi(this IServiceCollection services)
     {
-        //bd
+        // Db
         services.AddDbContext<AppDbContext>(o => o.UseInMemoryDatabase("AuthDb"));
 
-        // repositorios
+        // Repositories
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
         
-        //servicos
+        // Services
         services.AddScoped(typeof(IUserService), typeof(Services.UserService));
     }
 }

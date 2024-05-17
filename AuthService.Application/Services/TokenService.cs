@@ -21,16 +21,16 @@ public class TokenService : ITokenService
     
     public string GenerateToken(string username)
     {
-        var issuer = _configuration["Jwt:Issuer"] ?? // pega o issuer do jwt
-                     throw new InvalidConfigurationException("Invalid jwt issuer configuration");
-        
-        var audience = _configuration["Jwt:Audience"] ?? // pega o audience do jwt
-                       throw new InvalidConfigurationException("Invalid jwt audience configuration");
-        
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? // pega a chave do jwt
-                throw new InvalidConfigurationException("Invalid jwt key configuration")));
-        
-        // cria o token com as claims, issuer, audience e o tempo de expiração
+        // Get the issuer from configuration or throw an exception
+        var issuer = _configuration["Jwt:Issuer"] ?? throw new InvalidConfigurationException("Invalid jwt issuer configuration");
+    
+        // Get the audience from configuration or throw an exception
+        var audience = _configuration["Jwt:Audience"] ?? throw new InvalidConfigurationException("Invalid jwt audience configuration");
+    
+        // Get the key from configuration or throw an exception
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new InvalidConfigurationException("Invalid jwt key configuration")));
+    
+        // Create the token descriptor with claims, issuer, audience, and expiration time
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Claims = new Dictionary<string, object>
@@ -44,22 +44,30 @@ public class TokenService : ITokenService
         };
         
         var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor); // cria o token
+        
+        // Create the token
+        var token = tokenHandler.CreateToken(tokenDescriptor); 
         return tokenHandler.WriteToken(token);
     }
     
     private TimeSpan GetTokenLifetime()
     {
-        string tokenLifetimeString = _configuration["Jwt:TokenLifetime"] ?? "erro"; // pega o tempo de expiração do jwt
-        string format = @"hh\:mm\:ss"; // formato do tempo de expiração
-        
-        IFormatProvider formatProvider = CultureInfo.InvariantCulture; // formatação do tempo de expiração para cultura
-        
-        // converte o tempo de expiração para TimeSpan
-        if (TimeSpan.TryParseExact(tokenLifetimeString,format, formatProvider, out TimeSpan tokenLifetime))
+        // Get the token lifetime string from the configuration
+        string tokenLifetimeString = _configuration["Jwt:TokenLifetime"] ?? 
+                                     throw new InvalidConfigurationException("Invalid token lifetime configuration");
+    
+        // Define the format for the token lifetime string
+        string format = @"hh\:mm\:ss";
+    
+        // Set the format provider for the token lifetime string
+        IFormatProvider formatProvider = CultureInfo.InvariantCulture; 
+    
+        // Convert the token lifetime string to a TimeSpan
+        if (TimeSpan.TryParseExact(tokenLifetimeString, format, formatProvider, out TimeSpan tokenLifetime))
         {
             return tokenLifetime;
         }
+    
         throw new InvalidConfigurationException("Invalid token lifetime configuration");
     }
 

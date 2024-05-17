@@ -10,16 +10,16 @@ namespace AuthService.Application.DI;
 
 public static class Initializer
 {
-    public static void ConfigureDI(this IServiceCollection services)
+    public static void ConfigureDi(this IServiceCollection services)
     {
-        //bd
+        // bd
         services.AddDbContext<AppDbContext>(o => o.UseInMemoryDatabase("AuthDb"));
 
-        // repositorios
+        // repositories
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped(typeof(ICredentialsRepository), typeof(CredentialsRepository));
         
-        //servicos
+        // services
         services.AddScoped(typeof(IAuthService), typeof(Services.AuthService));
         services.AddScoped(typeof(ITokenService), typeof(TokenService));
         

@@ -15,23 +15,32 @@ public class AuthService : IAuthService
 
     public async Task Register(string username, string password)
     {
-        var loginCredential = new LoginCredential // cria um novo login
+        // Create Login
+        var loginCredential = new LoginCredential 
         {
             Username = username,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password) // encripta a senha
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password) // Encrypt password
         };
-        
-        await _context.Register(loginCredential); // registra no bd
+    
+        // Register the new user in the database
+        await _context.Register(loginCredential);
     }
     
     public async Task<bool> Login(string username, string password)
     {
-        var credential = await _context.GetCredentialByUsername(username); // busca o login pelo username
-        return BCrypt.Net.BCrypt.Verify(password, credential?.PasswordHash); // verifica se a senha esta correta com a senha encriptada
+        // Get Login credentials from the context
+        var credential = await _context.GetCredentialByUsername(username);
+    
+        // Verify if Login credentials exist
+        if (credential == null)
+            return false;
+    
+        // Verify the password using BCrypt hashing
+        return BCrypt.Net.BCrypt.Verify(password, credential.PasswordHash);
     }
 
     public async Task<bool> IsUsernameInDb(string username)
     {
-        return await _context.IsUsernameInDb(username); // retorna true se o username estiver no bd
+        return await _context.IsUsernameInDb(username); // Verify if username is already in use
     }
 }

@@ -2,7 +2,6 @@
 using AuthService.Application.Dtos;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthService.Api.Controllers;
@@ -22,21 +21,27 @@ public class AuthController : ControllerBase
         _save = save;
     }
 
-
     [HttpPost("register")]
     public async Task<IActionResult> Register(LoginCredentialsDto dto)
     {
         try
         {
-            if (await _service.IsUsernameInDb(dto.Username)) // verifica se o username ja existe
+            // Check if the username is already in use
+            if (await _service.IsUsernameInDb(dto.Username)) 
                 return BadRequest("Username already in use");
 
-            await _service.Register(dto.Username, dto.Password); // registra o usuario
-            
-            var token = _tokenService.GenerateToken(dto.Username); // gera o JWToken
-            
-            await _save.SaveChangesAsync(); // salva alteração no bd
-            SendUsername.Send(dto.Username); // envia o username para o RabbitMQ(cria o usuario no outro servico);
+            // Register the user with the provided credentials
+            await _service.Register(dto.Username, dto.Password);
+        
+            // Generate a token for the registered user
+            var token = _tokenService.GenerateToken(dto.Username);
+        
+            // Save changes to the database
+            await _save.SaveChangesAsync(); 
+        
+            // Send username to rabbitmq (Create user in UserService)
+            SendUsername.Send(dto.Username);
+
             return Ok(token);
         }
         catch (Exception e)
@@ -50,13 +55,12 @@ public class AuthController : ControllerBase
     {
         try
         {
-            if (!await _service.IsUsernameInDb(dto.Username)) // verifica se o username está no banco
-                return BadRequest("Username not found");
-            if (!await _service.Login(dto.Username, dto.Password)) // verifica se a senha esta correta
-                return BadRequest("Invalid password");
+            // Verify if username and password are correct
+            if (!await _service.Login(dto.Username, dto.Password)) 
+                return BadRequest("Wrong username or password");
             
-            var token = _tokenService.GenerateToken(dto.Username); // gera o JWToken
-            
+            // Generate JWT token
+            var token = _tokenService.GenerateToken(dto.Username); 
             return Ok(token);
         }
         catch (Exception e)

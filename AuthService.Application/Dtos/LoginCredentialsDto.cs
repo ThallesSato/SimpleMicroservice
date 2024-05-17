@@ -6,8 +6,8 @@ public class LoginCredentialsDto
 {
     [Required]
     [MinLength(4)]
-    public string Username { get; set; }
+    public required string Username { get; set; }
     [Required]
     [MinLength(4)]
-    public string Password { get; set; }
+    public required string Password { get; set; }
 }

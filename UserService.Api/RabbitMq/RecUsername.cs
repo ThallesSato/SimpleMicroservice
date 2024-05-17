@@ -19,45 +19,57 @@ namespace UserService.Api.RabbitMq
         {
             _serviceScopeFactory = serviceScopeFactory;
         }
-
+        
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            // Create a connection factory
             var factory = new ConnectionFactory() { HostName = "localhost" };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
 
+            // Declare a queue named "username"
             _channel.QueueDeclare(queue: "username",
-                                  durable: false,
-                                  exclusive: false,
-                                  autoDelete: false,
-                                  arguments: null);
+                durable: false,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
 
+            // Create a consumer for handling incoming messages
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += async (model, ea) =>
-            {
+            { 
+                // Get the body of the message
                 var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-                    Console.WriteLine(message);
-                    var user = new User { Username = message };
-                    await userService.AddAsync(user);
-                    var save = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                    await save.SaveChangesAsync();
-                }
+    
+                // Convert the body to a string
+                var message = Encoding.UTF8.GetString(body); 
+                
+                // Create a new user object with the received message as the username
+                var user = new User { Username = message };
+    
+                // Get services to save the user
+                using var scope = _serviceScopeFactory.CreateScope();
+                var save = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+                
+                // Add the user asynchronously
+                await userService.AddAsync(user);
+    
+                // Save changes asynchronously
+                await save.SaveChangesAsync();
             };
 
+            // Start consuming messages from the "username" queue
             _channel.BasicConsume(queue: "username",
-                                  autoAck: true,
-                                  consumer: consumer);
+                autoAck: true,
+                consumer: consumer);
 
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            // Close the connection
             _channel?.Close();
             _connection?.Close();
             return Task.CompletedTask;

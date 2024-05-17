@@ -12,9 +12,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); 
 
 builder.Services.AddControllers();
-builder.Services.AddAuthenticationDependency(builder.Configuration);
-builder.Services.ConfigureDi();
 
+// Dependency Injection
+builder.Services.ConfigureDi(); // Services, repositories, bd 
+builder.Services.AddAuthenticationDependency(builder.Configuration); // Authentication and Authorization
+
+// RabbitMQ
 builder.Services.AddHostedService<RecUsername>();
 
 var app = builder.Build();

@@ -1,6 +1,4 @@
 using AuthService.Application.DI;
-using AuthService.Infra.Context;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +9,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
 
-builder.Services.ConfigureDI(); // configuração de servicos, bd, repositorios
-builder.Services.AddAuthenticationDependency(builder.Configuration); // configuração de autenticação
+// Dependency Injection
+builder.Services.ConfigureDi(); // services, repositories, bd 
 
 var app = builder.Build();
 
@@ -25,7 +23,5 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-
-app.UseAuthentication();
 
 app.Run();
