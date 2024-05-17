@@ -1,4 +1,5 @@
-﻿using AuthService.Application.Dtos;
+﻿using AuthService.Api.Rabbit;
+using AuthService.Application.Dtos;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,7 @@ public class AuthController : ControllerBase
             var token = _tokenService.GenerateToken(dto.Username); // gera o JWToken
             
             await _save.SaveChangesAsync(); // salva alteração no bd
+            SendUsername.Send(dto.Username); // envia o username para o RabbitMQ(cria o usuario no outro servico);
             return Ok(token);
         }
         catch (Exception e)

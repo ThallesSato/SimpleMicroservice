@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using UserService.Api.RabbitMq;
 using UserService.Application.DI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
 builder.Services.AddAuthenticationDependency(builder.Configuration);
+builder.Services.ConfigureDi();
+
+builder.Services.AddHostedService<RecUsername>();
 
 var app = builder.Build();
 
